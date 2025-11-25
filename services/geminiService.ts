@@ -3,7 +3,8 @@ import { VisionMetrics, AnalysisReport, FaceMetrics, HandMetrics, BodyMetrics, E
 // ⚠️ 注意：实际开发中，建议把 Key 放在 .env 文件里
 const OPENROUTER_API_KEY = "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";
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL_NAME = "x-ai/grok-4.1-fast:free";
+// 使用更稳定的免费模型
+const MODEL_NAME = "google/gemini-2.0-flash-exp:free";
 
 // 将指标数据转换为易读的描述
 function formatMetricsForPrompt(metrics: VisionMetrics): string {

@@ -196,8 +196,8 @@ export const FaceScanner: React.FC<FaceScannerProps> = ({
   // Only mirror if using front facing camera AND not displaying an uploaded image
   const transformStyle = (!uploadedImage && facingMode === 'user') ? 'scale-x-[-1]' : '';
 
-  // Button disabled logic:
-  const isAnalyzeDisabled = !landmarks || isProcessing || (mode === 'face' && !poseStatus.isCentered && !uploadedImage);
+  // Button disabled logic: 只要检测到特征点就可以点击，姿势不居中只是警告
+  const isAnalyzeDisabled = !landmarks || isProcessing;
 
   return (
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto">

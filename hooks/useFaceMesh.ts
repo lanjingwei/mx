@@ -21,7 +21,6 @@ export const useVision = (mode: VisionMode) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const requestRef = useRef<number>();
   const modeRef = useRef<VisionMode>(mode);
-  const isCameraActiveRef = useRef<boolean>(false);
 
   // Sync ref
   useEffect(() => { modeRef.current = mode; }, [mode]);
@@ -139,11 +138,8 @@ export const useVision = (mode: VisionMode) => {
         }
       });
       videoRef.current.srcObject = stream;
+      videoRef.current.addEventListener('loadeddata', predictWebcam);
       setIsCameraActive(true);
-      isCameraActiveRef.current = true;
-      videoRef.current.addEventListener('loadeddata', () => {
-        predictWebcam();
-      });
     } catch (err) {
       console.error("Error accessing webcam:", err);
       alert("无法访问摄像头，请检查权限。");
@@ -222,7 +218,7 @@ export const useVision = (mode: VisionMode) => {
   };
 
   const predictWebcam = () => {
-    if (!videoRef.current || !isCameraActiveRef.current) return;
+    if (!videoRef.current || !isCameraActive) return;
     
     // Check if video is ready
     if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
@@ -241,7 +237,6 @@ export const useVision = (mode: VisionMode) => {
   };
 
   const stopCamera = () => {
-      isCameraActiveRef.current = false;
       if (videoRef.current && videoRef.current.srcObject) {
           const stream = videoRef.current.srcObject as MediaStream;
           stream.getTracks().forEach(track => track.stop());

@@ -3,8 +3,7 @@ import { VisionMetrics, AnalysisReport, FaceMetrics, HandMetrics, BodyMetrics, E
 // ⚠️ 注意：实际开发中，建议把 Key 放在 .env 文件里
 const OPENROUTER_API_KEY = "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";
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-// 使用更稳定的免费模型
-const MODEL_NAME = "google/gemini-2.0-flash-exp:free";
+const MODEL_NAME = "x-ai/grok-4.1-fast:free";
 
 // 将指标数据转换为易读的描述
 function formatMetricsForPrompt(metrics: VisionMetrics): string {
@@ -264,12 +263,14 @@ export async function analyzeWithGemini(metrics: VisionMetrics): Promise<Analysi
 请基于以上${metrics.mode === 'face' ? '面相' : metrics.mode === 'hand' ? '手相' : '体态'}数据，进行深度分析。
 请严格按照JSON格式返回分析结果，不要包含任何markdown格式符号（如\`\`\`json），直接返回纯JSON对象。`;
 
+    console.log('正在调用 OpenRouter API...');
+    
     const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': window.location.origin,
+        'HTTP-Referer': window.location.href || 'https://lanjingwei.github.io/mx',
         'X-Title': 'Tianji AI Face Reader'
       },
       body: JSON.stringify({
@@ -291,7 +292,9 @@ export async function analyzeWithGemini(metrics: VisionMetrics): Promise<Analysi
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`API 请求失败: ${response.status} - ${JSON.stringify(errorData)}`);
+      console.error('API 错误响应:', errorData);
+      const errorMsg = errorData?.error?.message || JSON.stringify(errorData);
+      throw new Error(`API 请求失败 (${response.status}): ${errorMsg}`);
     }
 
     const result = await response.json();

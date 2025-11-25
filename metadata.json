@@ -1,0 +1,7 @@
+{
+  "name": "天机 (Tianji) - AI Face Reader",
+  "description": "一个赛博道家风格的面相分析应用，基于传统面相学（三停五眼）为您解析性格与运势。",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

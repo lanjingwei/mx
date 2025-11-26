@@ -1,9 +1,9 @@
 import { VisionMetrics, AnalysisReport, FaceMetrics, HandMetrics, BodyMetrics, EarMetrics } from "../types";
 
-// ⚠️ 注意：实际开发中，建议把 Key 放在 .env 文件里
-const OPENROUTER_API_KEY = "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";
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL_NAME = "x-ai/grok-4.1-fast:free";
+// ⚠️ SiliconFlow API 配置
+const API_KEY = "sk-mmphcajayohcjtcgnyuzbkpqdyyrbshnrjfapwqmjtfxhcju";
+const API_URL = "https://api.siliconflow.cn/v1/chat/completions";
+const MODEL_NAME = "THUDM/GLM-4-9B-0414";
 
 // 将指标数据转换为易读的描述
 function formatMetricsForPrompt(metrics: VisionMetrics): string {
@@ -263,15 +263,13 @@ export async function analyzeWithGemini(metrics: VisionMetrics): Promise<Analysi
 请基于以上${metrics.mode === 'face' ? '面相' : metrics.mode === 'hand' ? '手相' : '体态'}数据，进行深度分析。
 请严格按照JSON格式返回分析结果，不要包含任何markdown格式符号（如\`\`\`json），直接返回纯JSON对象。`;
 
-    console.log('正在调用 OpenRouter API...');
+    console.log('正在调用 SiliconFlow API...');
     
-    const response = await fetch(OPENROUTER_API_URL, {
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': window.location.href || 'https://lanjingwei.github.io/mx',
-        'X-Title': 'Tianji AI Face Reader'
+        'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
         model: MODEL_NAME,
@@ -285,8 +283,10 @@ export async function analyzeWithGemini(metrics: VisionMetrics): Promise<Analysi
             content: userPrompt
           }
         ],
+        stream: false,
         temperature: 0.7,
-        max_tokens: 3000
+        top_p: 0.7,
+        max_tokens: 4096
       })
     });
 
